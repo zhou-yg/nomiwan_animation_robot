@@ -1,3 +1,3 @@
 exports.openCb = function(){
-    console.log('youku open');
+    console.log('tudou open');
 };

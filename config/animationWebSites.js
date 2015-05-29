@@ -1,5 +1,10 @@
 module.exports = {
     youku:{
-        url:'http://comic.youku.com/'
+        query:'youku',
+        address:'http://comic.youku.com/'
+    },
+    tudou:{
+        query:'tudou',
+        address:'http://cartoon.tudou.com/'
     }
 };
