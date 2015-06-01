@@ -1,5 +1,3 @@
-var pageCreator = require('webpage');
-
 var webSites = require('./config/animationWebsites.js');
 
 var queryDir = './query/';
@@ -17,8 +15,9 @@ for(var webSiteObjKey in webSites){
             var query  = require(queryDir+queryName);
 
             if(query.openCb){
-                var page = pageCreator.create();
-                page.open(address,query.openCb);
+
+                query.openCb(address)
+
             }else{
                 console.log(queryName,' hasnt init')
             }
