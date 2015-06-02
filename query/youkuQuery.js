@@ -1,5 +1,11 @@
+var fs = require('fs');
+
 var pageCreator = require('webpage');
 var page = pageCreator.create();
+
+var name = 'youku';
+var saveJsonPath = './db/';
+var saveJsonPostFix = '.json';
 
 //获取‘重磅推荐’
 var getRecommend = function(){
@@ -44,6 +50,15 @@ var getOtherList = function(){
     return tmp;
 };
 
+var saveJson = function(animationArr){
+    var fileFullName = saveJsonPath+name+saveJsonPostFix;
+    var contents = JSON.stringify({
+        source:name,
+        animationArr:animationArr
+    });
+
+    fs.write(fileFullName,contents,'w');
+};
 
 exports.openCb = function(address){
 
@@ -59,13 +74,15 @@ exports.openCb = function(address){
     page.open(address,function(status){
 
         var recommendArr = page.evaluate(getRecommend);
-        console.log(JSON.stringify(recommendArr,undefined,4));
+//        console.log(JSON.stringify(recommendArr,undefined,4));
         console.log('***************************************');
         var inSeasonArr = page.evaluate(getOtherList);
-        console.log(JSON.stringify(inSeasonArr,undefined,4));
+//        console.log(JSON.stringify(inSeasonArr,undefined,4));
         console.log('***************************************');
 
         var youkuAnimationObjArr = recommendArr.concat(inSeasonArr);
+
+        saveJson(youkuAnimationObjArr);
 
         phantom.exit();
     });

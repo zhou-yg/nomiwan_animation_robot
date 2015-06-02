@@ -19,7 +19,7 @@ for(var webSiteObjKey in webSites){
                 query.openCb(address)
 
             }else{
-                console.log(queryName,' hasnt init')
+                console.log(queryName,' hasnt cb')
             }
         }
 
