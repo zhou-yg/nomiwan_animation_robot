@@ -1,4 +1,5 @@
 var fs = require('fs');
+var Q = require('q');
 
 var pageCreator = require('webpage');
 var page = pageCreator.create();
@@ -62,6 +63,8 @@ var saveJson = function(animationArr){
 
 exports.openCb = function(address){
 
+    var deferred = Q.defer();
+
     page.settings.resourceTimeout = 2000;
 
     page.onResourceTimeout = function(req){
@@ -84,6 +87,8 @@ exports.openCb = function(address){
 
         saveJson(youkuAnimationObjArr);
 
-        phantom.exit();
+        deferred.resolve(name);
     });
+
+    return deferred.promise
 };

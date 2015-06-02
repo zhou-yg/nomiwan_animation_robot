@@ -1,7 +1,10 @@
+var Q = require('q');
 var webSites = require('./config/animationWebsites.js');
 
 var queryDir = './query/';
 var querySuffix = 'Query';
+
+var promiseArr = [];
 
 for(var webSiteObjKey in webSites){
     (function(webSiteObjKey){
@@ -16,7 +19,9 @@ for(var webSiteObjKey in webSites){
 
             if(query.openCb){
 
-                query.openCb(address)
+                var p = query.openCb(address);
+
+                promiseArr.push(p);
 
             }else{
                 console.log(queryName,' hasnt cb')
@@ -25,3 +30,8 @@ for(var webSiteObjKey in webSites){
 
     })(webSiteObjKey);
 }
+
+Q.all(promiseArr).done(function() {
+    console.log('phantom.exit()');
+    phantom.exit();
+});

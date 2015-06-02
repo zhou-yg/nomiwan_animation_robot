@@ -1,7 +1,10 @@
 {
   "name": "application-name",
   "version": "0.0.1",
+  "description":"phantomjs project",
   "dependencies":{
-    "mongoose":"x.x.x"
-  }
+    "mongoose":"x.x.x",
+    "Q":"x.x.x"
+  },
+  "repository":"http://github.com/zhou-yg/nomiwan_animation_robot"
 }
