@@ -1,37 +1,62 @@
 var Q = require('q');
+
 var webSites = require('./config/animationWebsites.js');
+
+var concatNewAnimation = require('./lib/concatNewAnimation.js');
 
 var queryDir = './query/';
 var querySuffix = 'Query';
 
-var promiseArr = [];
+var saveJsonDirPath = './db/';
 
-for(var webSiteObjKey in webSites){
-    (function(webSiteObjKey){
-        var webSiteObj = webSites[webSiteObjKey];
-        var address = webSiteObj.address;
+var queryAllWebSites = function(){
+    var promiseArr = [];
 
-        if(address){
+    for(var webSiteObjKey in webSites){
+        (function(webSiteObjKey){
+            var webSiteObj = webSites[webSiteObjKey];
+            var address = webSiteObj.address;
 
-            var queryPreName = webSiteObj.query || webSiteObjKey;
-            var queryName = queryPreName+querySuffix;
-            var query  = require(queryDir+queryName);
+            if(address){
 
-            if(query.openCb){
+                var queryPreName = webSiteObj.query || webSiteObjKey;
+                var queryName = queryPreName+querySuffix;
+                var query  = require(queryDir+queryName);
 
-                var p = query.openCb(address);
+                if(query.openCb){
 
-                promiseArr.push(p);
+                    var p = query.openCb({
+                        address:address,
+                        saveJsonDirPath:saveJsonDirPath
+                    });
 
-            }else{
-                console.log(queryName,' hasnt cb')
+                    promiseArr.push(p);
+
+                }else{
+                    console.log(queryName,' hasnt cb')
+                }
             }
-        }
 
-    })(webSiteObjKey);
-}
+        })(webSiteObjKey);
+    }
 
-Q.all(promiseArr).done(function() {
+    return promiseArr;
+};
+
+// when query all websites done
+/*
+Q.all(queryAllWebSites()).done(function() {
     console.log('phantom.exit()');
+
+    concatNewAnimation.saveConcatResult({
+        saveJsonDirPath:saveJsonDirPath
+    });
+
     phantom.exit();
 });
+    */
+concatNewAnimation.saveConcatResult({
+    saveJsonDirPath:saveJsonDirPath
+});
+
+phantom.exit();

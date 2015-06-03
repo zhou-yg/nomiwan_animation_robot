@@ -4,58 +4,36 @@ var Q = require('q');
 var pageCreator = require('webpage');
 var page = pageCreator.create();
 
-var name = 'tudou';
+var name = 'iqiyi';
 var saveJsonDirPath = './db/';
 var saveJsonPostFix = '.json';
 
 
-var getNewAnimation = function(){
-    var selector = 'div.box .ani_part02 .part02_list > ul > li';
-    var getNewAnimationHooks = function(liArr){
-        var i,
-            len = liArr.length,
-            liOne = null,
-            children = null,
-            p = null;
+var getEveryWeekUpdate = function(){
+    var selector = 'div.wrapper-week div.weekline_list > div ul.site-piclist-11665 > li > div > a';
+    var imgSelector = 'div img';
+    var nameSelector = 'div h4';
 
-        // p
-        for(i= 0;i<len;i++){
-            liOne = liArr[i];
-            children = liOne.children;
-            if(children.length == 1){
-
-            }else if(children.length == 2){
-                p = children[1];
-                children[0].appendChild(p);
-            }
-        }
-        // p.a
-        for(i=0;i<len;i++){
-            liOne = liArr[i];
-            children = liOne.children[0].children;
-            if(children[1].children.length>0){
-                children[1].innerText = children[1].children[0].innerText;
-            }
-        }
-        return liArr;
-    };
-
-    var ul = document.querySelectorAll(selector);
-    ul = getNewAnimationHooks(ul);
+    var allA = document.querySelectorAll(selector);
 
     var tmp = [];
-    var i= 0,len = ul.length;
+    var i= 0,len = allA.length,
+        aLink = imgDom = h4Dom = null,
+        otherRegExp = /[:|：][\W\w]*/;
 
     for(;i<len;i++){
-        var liOne = ul[i];
+        aLink = allA[i];
+        imgDom = aLink.querySelector(imgSelector);
+        h4Dom  = aLink.querySelector(nameSelector);
 
-        var a = liOne.children[0];
+        var tmpName = h4Dom.title || h4Dom.alt;
+        tmpName = tmpName.replace(otherRegExp,'');
 
         tmp.push({
-            name: a.innerText.replace(/\n/g,''),
-            img:  a.children[0].src,
-            href: a.href
-        })
+            name:tmpName,
+            href:aLink.href,
+            img:imgDom.src
+        });
     }
 
     return tmp;
@@ -93,10 +71,10 @@ exports.openCb = function(option){
     };
     page.open(address,function(status){
 
-        var tudouNewAnimationArr = page.evaluate(getNewAnimation);
+        var iqiyiNewAnimationArr = page.evaluate(getEveryWeekUpdate);
         //console.log(JSON.stringify(tudouNewAnimationArr,undefined,4));
         console.log('--------------'+name+' query done ------------------');
-        saveJson(tudouNewAnimationArr);
+        saveJson(iqiyiNewAnimationArr);
 
         deferred.resolve(name);
     });

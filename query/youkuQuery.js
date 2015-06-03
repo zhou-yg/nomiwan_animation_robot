@@ -5,7 +5,7 @@ var pageCreator = require('webpage');
 var page = pageCreator.create();
 
 var name = 'youku';
-var saveJsonPath = './db/';
+var saveJsonDirPath = './db/';
 var saveJsonPostFix = '.json';
 
 //获取‘重磅推荐’
@@ -52,7 +52,7 @@ var getOtherList = function(){
 };
 
 var saveJson = function(animationArr){
-    var fileFullName = saveJsonPath+name+saveJsonPostFix;
+    var fileFullName = saveJsonDirPath+name+saveJsonPostFix;
     var contents = JSON.stringify({
         source:name,
         animationArr:animationArr
@@ -61,9 +61,16 @@ var saveJson = function(animationArr){
     fs.write(fileFullName,contents,'w');
 };
 
-exports.openCb = function(address){
+exports.openCb = function(option){
 
     var deferred = Q.defer();
+
+    if(!(option.address && option.saveJsonDirPath)){
+        return;
+    }
+
+    address = option.address;
+    saveJsonDirPath = option.saveJsonDirPath || saveJsonDirPath;
 
     page.settings.resourceTimeout = 2000;
 
@@ -78,10 +85,9 @@ exports.openCb = function(address){
 
         var recommendArr = page.evaluate(getRecommend);
 //        console.log(JSON.stringify(recommendArr,undefined,4));
-        console.log('***************************************');
         var inSeasonArr = page.evaluate(getOtherList);
 //        console.log(JSON.stringify(inSeasonArr,undefined,4));
-        console.log('***************************************');
+        console.log('--------------'+name+' query done ------------------');
 
         var youkuAnimationObjArr = recommendArr.concat(inSeasonArr);
 
