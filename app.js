@@ -44,7 +44,6 @@ var queryAllWebSites = function(){
 };
 
 // when query all websites done
-/*
 Q.all(queryAllWebSites()).done(function() {
     console.log('phantom.exit()');
 
@@ -54,9 +53,3 @@ Q.all(queryAllWebSites()).done(function() {
 
     phantom.exit();
 });
-    */
-concatNewAnimation.saveConcatResult({
-    saveJsonDirPath:saveJsonDirPath
-});
-
-phantom.exit();
