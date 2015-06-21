@@ -3,11 +3,16 @@ var Q = require('q');
 var webSites = require('./config/animationWebsites.js');
 
 var concatNewAnimation = require('./lib/concatNewAnimation.js');
-
+//------------------------
 var queryDir = './query/';
-var querySuffix = 'Query';
+var queryPostfix = 'Query';
 
-var saveJsonDirPath = './db/';
+var saveAllJsonName = 'all.json';
+var saveJsonDirPath = './data/';
+//------------------------
+var queryEpisodesDir = './queryEpisodes/';
+var queryEpisodesPostfix = 'Episodes';
+
 
 var queryAllWebSites = function(){
     var promiseArr = [];
@@ -16,17 +21,17 @@ var queryAllWebSites = function(){
         (function(webSiteObjKey){
             var webSiteObj = webSites[webSiteObjKey];
             var address = webSiteObj.address;
-
+            var sourceName = webSiteObj.name;
             if(address){
 
                 var queryPreName = webSiteObj.query || webSiteObjKey;
-                var queryName = queryPreName+querySuffix;
+                var queryName = 'queryAnimation';
                 var query  = require(queryDir+queryName);
 
-                if(query.openCb){
-
-                    var p = query.openCb({
-                        address:address,
+                if(query.open){
+                    var p = query.open({
+                        sourceName:sourceName,
+                        href:address,
                         saveJsonDirPath:saveJsonDirPath
                     });
 
@@ -42,14 +47,17 @@ var queryAllWebSites = function(){
 
     return promiseArr;
 };
-
+var promiseArr = queryAllWebSites();
 // when query all websites done
-Q.all(queryAllWebSites()).done(function() {
-    console.log('phantom.exit()');
+Q.all(promiseArr).done(function() {
 
     concatNewAnimation.saveConcatResult({
-        saveJsonDirPath:saveJsonDirPath
-    });
+        saveJsonDirPath:saveJsonDirPath,
+        saveAllJsonName:saveAllJsonName
+    },function(){
 
-    phantom.exit();
+        console.log('phantom.exit()');
+
+        phantom.exit();
+    });
 });

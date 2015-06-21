@@ -1,21 +1,21 @@
 module.exports = {
     youkuNewAnimation:{
-        query:'youku',
+        name:'youku',
         address:'http://comic.youku.com/2015',
         desc:'新番'
     },
     tudouNewAnimation:{
-        query:'tudou',
+        name:'tudou',
         address:'http://zone.tudou.com/tudou_anime',
         desc:'新番'
     },
     iqiyiNewAnimation:{
-        query:'iqiyi',
+        name:'iqiyi',
         address:'http://www.iqiyi.com/dongman/bangumi.html',
         desc:'新番'
     },
     pptvNewAnimation:{
-        query:'pptv',
+        name:'pptv',
         address:'http://cartoon.pptv.com/',
         desc:'新番'
     }
