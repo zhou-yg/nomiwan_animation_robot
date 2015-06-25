@@ -2,13 +2,13 @@
  * Created by zyg on 15/6/21.
  */
 
-var allEpisodes = require('./lib/allEpisodes.js');
+var allVideoSrc = require('./lib/allVideoSrc.js');
 
 var t1 = +new Date();
 
-allEpisodes.getEpisodeUrls({
-    srcAllJson:'data/all.json',
-    destEpisodesJson:'data/allEpisodes.json'
+allVideoSrc.getVideoSrc({
+    allEpisodesJson:'data/allAnimationEpisodes_copy.json',
+    destAllVideoSrcJson:'data/allVideoSrc.json'
 
 },function(err,data){
 
