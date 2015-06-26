@@ -2,7 +2,8 @@
  * Created by zyg on 15/6/24.
  */
 var Q = require('Q');
-var pageCreator = require('webpage')
+var pageCreator = require('webpage');
+var utils = require('../lib/nmw_Utils');
 
 var allVideoSrcQueries = {
     iqiyi:{
@@ -12,17 +13,31 @@ var allVideoSrcQueries = {
                 var sharedVideoButtonSelector = 'div.act_shares a';
                 var sharedVideoSrcInputSelector = 'input.code-input';
 
-                var sharedVideoButton = document.querySelector(sharedVideoButtonSelector);
-                sharedVideoButton.click();
-
-                //只有这个点击后才能获取到下面的input们 2015.6.25
-                var videoSrcInputs = document.querySelectorAll(sharedVideoSrcInputSelector);
-
                 var srcArr = [];
 
-                //0.网址 1.swf 2.embed 从本身的网址不需要，从1开始
-                for(var i= 1,len=videoSrcInputs.length;i<len;i++){
-                    srcArr.push(videoSrcInputs[i].value)
+                try{
+                    var sharedVideoButton = document.querySelector(sharedVideoButtonSelector);
+                    if(sharedVideoButton){
+                        sharedVideoButton.click();
+
+                        //只有这个点击后才能获取到下面的input们 2015.6.25
+                        var videoSrcInputs = document.querySelectorAll(sharedVideoSrcInputSelector);
+
+                        //0.网址 1.swf 2.embed 从本身的网址不需要，从1开始
+                        /*
+                         for(var i= 1,len=videoSrcInputs.length;i<len;i++){
+                         srcArr.push(videoSrcInputs[i].value)
+                         }
+                         */
+                        if(videoSrcInputs.length>0){
+
+                            srcArr.push(videoSrcInputs[1].value);
+                            srcArr.push(videoSrcInputs[2].value);
+                        }
+                    }
+                }catch (e){
+
+
                 }
 
                 return srcArr;
@@ -35,21 +50,31 @@ var allVideoSrcQueries = {
                 var sharedVideoButtonSelector = 'a.btn_desc';
                 var sharedVideoSrcInputSelector = 'input.txt';
 
-                var sharedVideoButton = document.querySelector(sharedVideoButtonSelector);
-                sharedVideoButton.click();
-
-                //只有这个点击后才能获取到下面的input们 2015.6.25
-                var videoSrcInputs = document.querySelectorAll(sharedVideoSrcInputSelector);
-
                 var srcArr = [];
 
-                //0.iframe 1.swf 2.embed
-                for(var i= 0,len=videoSrcInputs.length;i<len;i++){
-                    srcArr.push(videoSrcInputs[i].value)
+                var sharedVideoButton = document.querySelector(sharedVideoButtonSelector);
+                if(sharedVideoButton){
+
+                    sharedVideoButton.click();
+
+                    //只有这个点击后才能获取到下面的input们 2015.6.25
+                    var videoSrcInputs = document.querySelectorAll(sharedVideoSrcInputSelector);
+
+
+                    //0.iframe 1.swf 2.embed
+                    /*
+                    for(var i= 0,len=videoSrcInputs.length;i<len;i++){
+                        srcArr.push(videoSrcInputs[i].value)
+                    }
+                    */
+                    if(videoSrcInputs.length>0){
+
+                        srcArr.push(videoSrcInputs[0].value);
+                        srcArr.push(videoSrcInputs[1].value);
+                        srcArr.push(videoSrcInputs[2].value);
+                    }
                 }
-
                 return srcArr;
-
             }
         }
     },
@@ -58,14 +83,22 @@ var allVideoSrcQueries = {
             return function(){
                 var sharedVideoSrcInputSelector = 'input.form_input';
 
+                var srcArr = [];
+
                 //只有这个点击后才能获取到下面的input们 2015.6.25
                 var videoSrcInputs = document.querySelectorAll(sharedVideoSrcInputSelector);
 
-                var srcArr = [];
-
                 //0.网址 1.swf 2.embed 3.iframe ,从本身的网址不需要，从1开始
+                /*
                 for(var i= 1,len=videoSrcInputs.length;i<len;i++){
                     srcArr.push(videoSrcInputs[i].value)
+                }
+                */
+                if(videoSrcInputs.length > 0){
+
+                    srcArr.push(videoSrcInputs[1].value);
+                    srcArr.push(videoSrcInputs[2].value);
+                    srcArr.push(videoSrcInputs[3].value);
                 }
 
                 return srcArr;
@@ -102,31 +135,38 @@ exports.open = function(option){
     page.onConsoleMessage = function(msg, lineNum, sourceId) {
         //console.log('CONSOLE: ' + msg);
     };
-    console.log(sourceName,':',videoSiteHref);
+    //console.log(sourceName,':',videoSiteHref);
     page.open(videoSiteHref,function(status){
         console.log(status);
 
         var sourceObj = allVideoSrcQueries[sourceName];
 
+        var videoSrcObj = {
+            sourceName:sourceName,
+            videoSrcArr:[]
+        };
+
         if(status === 'success' && sourceObj){
+
             var query = sourceObj.query();
 
-            console.log(1);
+            try{
+                var videoSrcArr = page.evaluate(query);
 
-            var videoSrcArr = page.evaluate(query);
+                videoSrcObj.videoSrcArr = videoSrcArr;
 
-            console.log('----------  query : '+sourceName+' episodes done ------------------');
-            //console.log(JSON.stringify(animationEpisodesArr,undefined,2));
+                console.log('----------  query : '+sourceName+' episodes done ------------------');
+                //console.log(JSON.stringify(animationEpisodesArr,undefined,2));
 
-            deferred.resolve({
-                sourceName:sourceName,
-                videoSrcArr:videoSrcArr
-            });
+                deferred.resolve(videoSrcObj);
+            }catch (e){
+                deferred.resolve(videoSrcObj);
+            }
+
+
         }else{
-            console.log(2);
 
             var err = 'there is no source of "'+sourceName+'"';
-            console.log('err:',err);
             deferred.reject(err);
         }
     });

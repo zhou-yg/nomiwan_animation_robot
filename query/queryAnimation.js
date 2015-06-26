@@ -255,6 +255,8 @@ exports.open = function (option) {
             console.log(err);
             deferred.reject(err);
         }
+
+        page.close();
     });
 
     return deferred.promise

@@ -7,7 +7,7 @@ var allVideoSrc = require('./lib/allVideoSrc.js');
 var t1 = +new Date();
 
 allVideoSrc.getVideoSrc({
-    allEpisodesJson:'data/allAnimationEpisodes_copy.json',
+    allEpisodesJson:'data/allAnimationEpisodes.json',
     destAllVideoSrcJson:'data/allVideoSrc.json'
 
 },function(err,data){
