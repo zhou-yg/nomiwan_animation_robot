@@ -2,12 +2,12 @@
  * Created by zyg on 15/6/21.
  */
 
-var allVideoSrc = require('./lib/allVideoSrc.js');
+var allVideoSrc = require('./lib/allVideoSrc_episodes.js');
 
 var t1 = +new Date();
 
 allVideoSrc.getVideoSrc({
-    allEpisodesJson:'data/allAnimationEpisodes.json',
+    allEpisodesJson:'data/allEpisodes.json',
     destAllVideoSrcJson:'data/allVideoSrc.json'
 
 },function(err,data){

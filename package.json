@@ -6,6 +6,7 @@
 
   "dependencies":{
     "Q":"x.x.x",
+    "promise":"x.x.x",
     "grunt":"0.4.5",
     "grunt-contrib-coffee":"x.x.x",
     "grunt-contrib-clean":"x.x.x",

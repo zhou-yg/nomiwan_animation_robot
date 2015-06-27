@@ -3,7 +3,7 @@
  */
 var fs = require('fs');
 var Q = require('q');
-var U = require('nmw_Utils');
+var utils = require('../lib/nmw_Utils.js');
 
 var pageCreator = require('webpage');
 
@@ -192,18 +192,25 @@ var allQueries = {
  */
 var saveJson = function (sourceName, animationArr) {
     var fileFullName = saveJsonDirPath + sourceName + saveJsonPostFix;
-    var backupsFileFullName = fileFullName.replace(/\.[*]/g, U.getNow()+saveJsonPostFix);
+    var backupsFileFullName = fileFullName.replace(/\.[\w]+/g, utils.getNow()+saveJsonPostFix);
 
-    if(fs.exists(fileFullName)){
-        fs.copy(fileFullName,backupsFileFullName);
+    try{
+
+        if(fs.exists(fileFullName)){
+            fs.copy(fileFullName,backupsFileFullName);
+        }
+
+        var contents = JSON.stringify({
+            source: sourceName,
+            animationArr: animationArr
+        });
+
+        fs.write(fileFullName, contents, 'w');
+
+    }catch(e){
+
+        utils.log(e);
     }
-
-    var contents = JSON.stringify({
-        source: sourceName,
-        animationArr: animationArr
-    });
-
-    fs.write(fileFullName, contents, 'w');
 };
 /**
  * @param option
@@ -217,27 +224,35 @@ exports.open = function (option) {
 
     var deferred = Q.defer();
 
-    if (!(option.sourceName && option.address && option.saveJsonDirPath)) {
-        return;
+    try{
+
+        var sourceName = option.sourceName,
+            address = option.address;
+
+        saveJsonDirPath = option.saveJsonDirPath || saveJsonDirPath;
+
+        var page = pageCreator.create();
+
+        page.settings.resourceTimeout = 1000;
+
+        page.onResourceTimeout = function (req) {
+            //console.log(JSON.stringify(req,undefined,2));
+            //console.log('===============================');
+        };
+        page.onConsoleMessage = function (msg, lineNum, sourceId) {
+            console.log('CONSOLE: ' + msg);
+        };
+
+    }catch (e){
+        utils.log(e);
     }
 
-    var sourceName = option.sourceName,
-        address = option.address;
+    utils.log('open:',address);
 
-    saveJsonDirPath = option.saveJsonDirPath || saveJsonDirPath;
 
-    var page = pageCreator.create();
-
-    page.settings.resourceTimeout = 2000;
-
-    page.onResourceTimeout = function (req) {
-        //console.log(JSON.stringify(req,undefined,2));
-        //console.log('===============================');
-    };
-    page.onConsoleMessage = function (msg, lineNum, sourceId) {
-        console.log('CONSOLE: ' + msg);
-    };
     page.open(address, function (status) {
+
+        utils.log(status);
 
         var sourceObj = allQueries[sourceName];
 
@@ -246,17 +261,20 @@ exports.open = function (option) {
 
             var newAnimationArr = page.evaluate(query);
             //console.log(JSON.stringify(tudouNewAnimationArr,undefined,4));
-            console.log('--------------' + sourceName + ' query done ------------------');
             saveJson(sourceName, newAnimationArr);
 
+            console.log('--------------' + sourceName + ' query done ------------------');
+
+            page.close();
+
             deferred.resolve(sourceName);
+
         } else {
             var err = 'there is no source of "' + sourceName + '"';
             console.log(err);
+            page.close();
             deferred.reject(err);
         }
-
-        page.close();
     });
 
     return deferred.promise
