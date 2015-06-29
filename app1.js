@@ -31,7 +31,8 @@ var queryAllWebSites = function(){
         webSitesLen = siteObjArr.length;
 
     var eachWebSitesObj = function(){
-        console.log(currentIndex);
+        utils.log('webSitesLen:',webSitesLen);
+        console.log('currentIndex:',currentIndex);
         if( currentIndex < webSitesLen){
 
             var webSiteObj = siteObjArr[currentIndex];
@@ -57,7 +58,7 @@ var queryAllWebSites = function(){
             }
 
         }else{
-
+            console.log('done');
             d.resolve(sourceName);
         }
     };
