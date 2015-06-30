@@ -19,7 +19,7 @@ allVideoSrc.getVideoSrc({
 
     var t2 = +new Date();
     var cost = (t2 - t1) / 1000;
-    console.log('===== 爬剧集 耗时：', cost, ' 秒 ======');
+    console.log('===== 爬'+eachQueryEpisodesNum+'个剧集 总共耗时：', cost, ' 秒 ======');
 
     phantom.exit();
 });

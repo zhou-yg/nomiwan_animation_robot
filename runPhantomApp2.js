@@ -4,7 +4,7 @@
 var fs = require('fs');
 var child = require('child_process');
 
-var dataDirPath = './data';
+var dataDirPath = './data/';
     allEpisodesJsonFile = dataDirPath+'allEpisodes.json';
 
 var allEpisodesObjArr = JSON.parse(fs.readFileSync(allEpisodesJsonFile).toString());

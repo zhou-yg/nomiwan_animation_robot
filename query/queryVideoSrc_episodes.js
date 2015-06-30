@@ -5,8 +5,6 @@ var Q = require('Q');
 var pageCreator = require('webpage');
 var utils = require('../lib/nmw_Utils');
 
-var page = pageCreator.create();
-
 var allVideoSrcQueries = {
     iqiyi:{
         query:function(){
@@ -125,19 +123,20 @@ exports.open = function(option){
     if(!(sourceName && videoSiteHref)){
         return;
     }
+    var page = pageCreator.create();
 
     page.settings.resourceTimeout = 2000;
 
     page.onResourceTimeout = function(req){
-        //console.log(JSON.stringify(req,undefined,2));
-        //console.log('===============================');
+        //utils.log(JSON.stringify(req,undefined,2));
+        //utils.log('===============================');
     };
     page.onConsoleMessage = function(msg, lineNum, sourceId) {
-        //console.log('CONSOLE: ' + msg);
+        //utils.log('CONSOLE: ' + msg);
     };
-    //console.log(sourceName,':',videoSiteHref);
+    //utils.log(sourceName,':',videoSiteHref);
     page.open(videoSiteHref,function(status){
-        console.log(status);
+        utils.log(status);
 
         var sourceObj = allVideoSrcQueries[sourceName];
 
@@ -155,13 +154,10 @@ exports.open = function(option){
 
                 videoSrcObj.videoSrcArr = videoSrcArr;
 
-                console.log('----------  query : '+sourceName+' episodes done ------------------');
-                //console.log(JSON.stringify(animationEpisodesArr,undefined,2));
-
-                page.close();
+                utils.log('----------  query : '+sourceName+' episodes done ------------------');
+                //utils.log(JSON.stringify(animationEpisodesArr,undefined,2));
                 deferred.resolve(videoSrcObj);
             }catch (e){
-                page.close();
                 deferred.resolve(videoSrcObj);
             }
 
@@ -169,7 +165,6 @@ exports.open = function(option){
         }else{
 
             var err = 'there is no source of "'+sourceName+'"';
-            page.close();
             deferred.reject(err);
         }
     });
