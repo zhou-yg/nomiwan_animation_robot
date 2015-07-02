@@ -155,18 +155,17 @@ exports.open = function(option){
 
                 videoSrcObj.videoSrcArr = videoSrcArr;
 
-                console.log('----------  query : '+sourceName+' episodes done ------------------');
-                //console.log(JSON.stringify(animationEpisodesArr,undefined,2));
-
+                page.close();
                 deferred.resolve(videoSrcObj);
             }catch (e){
+                page.close();
                 deferred.resolve(videoSrcObj);
             }
 
 
         }else{
-
             var err = 'there is no source of "'+sourceName+'"';
+            page.close();
             deferred.reject(err);
         }
     });

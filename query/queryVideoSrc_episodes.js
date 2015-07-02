@@ -24,15 +24,10 @@ var allVideoSrcQueries = {
                         var videoSrcInputs = document.querySelectorAll(sharedVideoSrcInputSelector);
 
                         //0.网址 1.swf 2.embed 从本身的网址不需要，从1开始
-                        /*
-                         for(var i= 1,len=videoSrcInputs.length;i<len;i++){
-                         srcArr.push(videoSrcInputs[i].value)
-                         }
-                         */
                         if(videoSrcInputs.length>0){
-
-                            srcArr.push(videoSrcInputs[1].value);
-                            srcArr.push(videoSrcInputs[2].value);
+                            for(var i= 0,len=videoSrcInputs.length;i<len;i++){
+                                srcArr.push(videoSrcInputs[i].value)
+                            }
                         }
                     }
                 }catch (e){
@@ -63,15 +58,11 @@ var allVideoSrcQueries = {
 
                     //0.iframe 1.swf 2.embed
                     /*
-                    for(var i= 0,len=videoSrcInputs.length;i<len;i++){
-                        srcArr.push(videoSrcInputs[i].value)
-                    }
                     */
                     if(videoSrcInputs.length>0){
-
-                        srcArr.push(videoSrcInputs[0].value);
-                        srcArr.push(videoSrcInputs[1].value);
-                        srcArr.push(videoSrcInputs[2].value);
+                        for(var i= 0,len=videoSrcInputs.length;i<len;i++){
+                            srcArr.push(videoSrcInputs[i].value)
+                        }
                     }
                 }
                 return srcArr;
@@ -89,16 +80,11 @@ var allVideoSrcQueries = {
                 var videoSrcInputs = document.querySelectorAll(sharedVideoSrcInputSelector);
 
                 //0.网址 1.swf 2.embed 3.iframe ,从本身的网址不需要，从1开始
-                /*
-                for(var i= 1,len=videoSrcInputs.length;i<len;i++){
-                    srcArr.push(videoSrcInputs[i].value)
-                }
-                */
                 if(videoSrcInputs.length > 0){
 
-                    srcArr.push(videoSrcInputs[1].value);
-                    srcArr.push(videoSrcInputs[2].value);
-                    srcArr.push(videoSrcInputs[3].value);
+                    for(var i= 1,len=videoSrcInputs.length;i<len;i++){
+                        srcArr.push(videoSrcInputs[i].value)
+                    }
                 }
 
                 return srcArr;
@@ -123,6 +109,7 @@ exports.open = function(option){
     if(!(sourceName && videoSiteHref)){
         return;
     }
+
     var page = pageCreator.create();
 
     page.settings.resourceTimeout = 2000;
@@ -154,17 +141,18 @@ exports.open = function(option){
 
                 videoSrcObj.videoSrcArr = videoSrcArr;
 
-                utils.log('----------  query : '+sourceName+' episodes done ------------------');
-                //utils.log(JSON.stringify(animationEpisodesArr,undefined,2));
+                page.close();
                 deferred.resolve(videoSrcObj);
+
             }catch (e){
+
                 deferred.resolve(videoSrcObj);
             }
 
 
         }else{
-
-            var err = 'there is no source of "'+sourceName+'"';
+            page.close();
+            var err = 'open fail : '+videoSiteHref;
             deferred.reject(err);
         }
     });

@@ -14,14 +14,15 @@ var allEpisodesObjArr = JSON.parse(fs.readFileSync(allEpisodesJsonFile).toString
 * 所有动漫源的量
 */
 var queryEpisodesIndex = 0,
-    eachQueryEpisodesNum = 20,
+    eachQueryEpisodesNum = 5,
     allEpisodesNum = allEpisodesObjArr.length;
 
 var isLast = false;
 
 var runPhantomjs = function(){
-
-    child.exec('phantomjs app2.js '+queryEpisodesIndex,function(error, stdout, stderr){
+    var runCommand = 'phantomjs app2.js '+queryEpisodesIndex+' '+eachQueryEpisodesNum
+    console.log(runCommand);
+    child.exec(runCommand,function(error, stdout, stderr){
         console.log('stdout: ' + stdout);
         console.log('stderr: ' + stderr);
 
@@ -29,7 +30,7 @@ var runPhantomjs = function(){
             console.log('exec error: ' + error);
         }
 
-        if(isLast){
+        if(!isLast){
             queryEpisodesIndex = queryEpisodesIndex+eachQueryEpisodesNum;
 
             if(queryEpisodesIndex >= allEpisodesNum){
