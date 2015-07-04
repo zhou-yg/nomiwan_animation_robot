@@ -18,8 +18,8 @@ allVideoSrc.getVideoSrc({
     startIndex:startIndex,
     eachQueryEpisodesNum:eachQueryEpisodesNum,
     //allEpisodesJson:'data/allEpisodes.json',
-    allEpisodesJson:'data/allAnimationEpisodes.json',
-    destAllVideoSrcJson:'data/allVideoSrc.json'
+    allEpisodesJson:'allAnimationEpisodes_copy.json',
+    destAllVideoSrcJson:'allVideoSrc.json'
 },function(err,data){
 
     utils.log(err);
