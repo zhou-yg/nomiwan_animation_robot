@@ -18,5 +18,11 @@ module.exports = {
         name:'pptv',
         address:'http://cartoon.pptv.com/',
         desc:'新番'
-    }
+    },
+    /*
+    bilibiliNewAnimation:{
+        name:'bilibili',
+        address:'http://www.bilibili.com',
+        desc:'新番'
+    }*/
 };

@@ -183,7 +183,17 @@ var allQueries = {
                 return tmp1.concat(tmp2);
             }
         }
-    }
+    },
+    /*
+    bilibili:function(){
+        return function(){
+            var weekDaySelector = '.bgm-calendar > .b-head > .b-tab li',
+                animationSelector = '.bgm-calendar > .b-body > ul > li';
+
+
+
+        };
+    }*/
 };
 /**
  * 保存爬到的所有动漫
@@ -254,13 +264,12 @@ exports.open = function (option) {
 
         utils.log(status);
 
-        var sourceObj = allQueries[sourceName];
 
-        if (sourceObj) {
+        if (status === 'success') {
+            var sourceObj = allQueries[sourceName];
             var query = sourceObj.query();
 
             var newAnimationArr = page.evaluate(query);
-            //console.log(JSON.stringify(tudouNewAnimationArr,undefined,4));
             saveJson(sourceName, newAnimationArr);
 
             console.log('--------------' + sourceName + ' query done ------------------');
@@ -270,7 +279,7 @@ exports.open = function (option) {
             deferred.resolve(sourceName);
 
         } else {
-            var err = 'there is no source of "' + sourceName + '"';
+            var err = 'open page failed  "' + sourceName + '" '+address;
             console.log(err);
             page.close();
             deferred.reject(err);

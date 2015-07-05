@@ -3,4 +3,11 @@
 
 node_modules/
 
-data/*
+data/*.json
+
+
+data/allEpisodes.json
+
+data/allVideoSrc.json
+
+data/allAnimationEpisodes.json

@@ -26,17 +26,37 @@ var allEpisodeQueries = {
     pptv:{
         query:function(){
             return function(){
-                var selector = '#dataList_juji ul.items > li > p > a';
+                function selector1(){
+                    var selector = '#dataList_juji ul.items > li > p > a';
 
-                var allA = document.querySelectorAll(selector);
+                    var allA = document.querySelectorAll(selector);
 
-                var tmp = [];
+                    var tmp = [];
 
-                for(var i= 0,len=allA.length;i<len;i++){
-                    tmp.push(allA[i].href);
+                    for(var i= 0,len=allA.length;i<len;i++){
+                        tmp.push(allA[i].href);
+                    }
+
+                    return  tmp;
                 }
+                function selector2(){
+                    var selector = '#div_source_data .sets_long > a';
 
-                return  tmp;
+                    var allA = document.querySelectorAll(selector);
+
+                    var tmp = [];
+
+                    for(var i= 0,len=allA.length;i<len;i++){
+                        tmp.push(allA[i].href);
+                    }
+
+                    return  tmp;
+                }
+                var arr = selector1();
+                if(arr.length === 0){
+                    arr = selector2();
+                }
+                return arr;
             }
         }
     },
@@ -60,14 +80,33 @@ var allEpisodeQueries = {
     youku:{
         query:function(){
             return function(){
-                var selector = '#vpofficiallistv5 > div > div > ul > li > a';
-
-                var allA = document.querySelectorAll(selector);
-
                 var tmp = [];
+                function selector1(){
+                    var selector = '#vpofficiallistv5 > div > div > ul > li > a';
+                    var allA = document.querySelectorAll(selector);
 
-                for(var i= 0,len=allA.length;i<len;i++){
-                    tmp.push(allA[i].href);
+                    var tmp1 = [];
+
+                    for(var i= 0,len=allA.length;i<len;i++){
+                        tmp1.push(allA[i].href);
+                    }
+
+                    return tmp1;
+                }
+                function selector2(){
+                    var selector = '.coll_2 > ul > li > a';
+                    var allA = document.querySelectorAll(selector);
+
+                    var tmp2 = [];
+
+                    for(var i= 0,len=allA.length;i<len;i++){
+                        tmp2.push(allA[i].href);
+                    }
+                    return tmp2;
+                }
+                tmp = selector1();
+                if(tmp.length === 0){
+                    tmp = selector2();
                 }
 
                 return  tmp;
@@ -104,28 +143,23 @@ exports.open = function(option){
     page.onConsoleMessage = function(msg, lineNum, sourceId) {
         //console.log('CONSOLE: ' + msg);
     };
-    console.log('before <<<<<< ',animationName+' : '+sourceName);
     page.open(href,function(status){
-        console.log('after >>>>>>>>> ',animationName, '   :  ',sourceName);
         var sourceObj = allEpisodeQueries[sourceName];
 
-        if(sourceObj){
+        if(status === 'success' ){
             var query = sourceObj.query();
 
             var animationEpisodesArr = page.evaluate(query);
 
-            console.log('----------  query '+animationName+' : '+sourceName+' episodes done ------------------');
-            //console.log(JSON.stringify(animationEpisodesArr,undefined,2));
-
+            page.close();
             deferred.resolve({
-                href:href,
-                animationName:animationName,
-                sourceName:sourceName,
-                animationEpisodesArr:animationEpisodesArr
+                href: href,
+                animationName: animationName,
+                sourceName: sourceName,
+                animationEpisodesArr: animationEpisodesArr
             });
         }else{
-            var err = 'there is no source of "'+sourceName+'"';
-            console.log(err);
+            var err = 'open page failed "'+sourceName+'" '+href;
             deferred.reject(err);
         }
     });

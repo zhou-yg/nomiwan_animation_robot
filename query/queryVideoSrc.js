@@ -83,7 +83,14 @@ var allVideoSrcQueries = {
         queryScript:function(page,scriptUrl,videoSrcObj,callback){
 
             function query(){
-                var embedTemplate = '<embed src="http://www.tudou.com/a/aCode/&bid=05&iid=iidCode&resourceId=0_05_05_99/v.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" wmode="opaque" width="480" height="400"></embed>',
+                var embedTemplate = '<embed src="http://www.tudou.com/a/aCode/&bid=05&iid=iidCode&resourceId=0_05_05_99/v.swf" ' +
+                    'type="application/x-shockwave-flash" ' +
+                    'allowscriptaccess="always" ' +
+                    'allowfullscreen="true" ' +
+                    'wmode="opaque" ' +
+                    'width="480" ' +
+                    'height="400">' +
+                    '</embed>',
                     embedTmpArr = [];
 
                 var selector = 'pre';
@@ -235,7 +242,7 @@ function openUrl(option){
             if(monitorObj){
                 utils.log('script open :',scriptUrl);
 
-                var allVideoSrcObj = sourceObj.queryScript(page,scriptUrl,videoSrcObj,function(allVideoSrcObj){
+                sourceObj.queryScript(page,scriptUrl,videoSrcObj,function(allVideoSrcObj){
 
                     page.close();
                     deferred.resolve(allVideoSrcObj);
@@ -305,20 +312,14 @@ exports.open = function(animationName,sourceName,episodes,t1,animationIndex) {
                 queryVideoSrcPromise.done(function (videoSrcObj) {
                     var t2 = +new Date();
                     var cost = (t2 - t1) / 1000;
-                    try{
-                        if(videoSrcObj.all){
-                            utils.log(videoSrcObj.all);
-                        }
-                    }catch (e){
-                        console.log(e);
-                    }
+
                     if(videoSrcObj.all){
-                        utils.log(animationName + ' 第' + animationIndex + '个剧集，' + sourceName + '全部源 耗时：', cost, ' 秒 ===============');
+                        utils.log('==== '+animationName + ' 第' + animationIndex + '个剧集，' + sourceName + '全部源 耗时：', cost, ' 秒 ===');
                         oneSourceVideoSrcObj.videoSrcObjArr = videoSrcObj.all;
 
                         d.resolve(oneSourceVideoSrcObj);
                     }else{
-                        utils.log(animationName + ' 第' + animationIndex + '个剧集，' + sourceName + '第' + currentEpisodesIndex + '个源 耗时：', cost, ' 秒 ===============');
+                        utils.log('==== '+animationName + ' 第' + animationIndex + '个剧集，' + sourceName + '全部源 耗时：', cost, ' 秒 ===');
                         oneSourceVideoSrcObj.videoSrcObjArr.push(videoSrcObj);
 
                         currentEpisodesIndex++;

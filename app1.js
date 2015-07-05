@@ -11,14 +11,15 @@ var queryName = 'queryAnimation';
 var saveAllJsonName = 'all.json';
 var saveJsonDirPath = './data/';
 //------------------------
-var queryEpisodesDir = './queryEpisodes/';
-var queryEpisodesPostfix = 'Episodes';
+var queryAnimation  = require(queryDir+queryName);
 
-var query  = require(queryDir+queryName);
+var webSitesLen = 0;
 
+var t1,t2 = 0;
 //遍历当前config好的网站们
 var queryAllWebSites = function(){
     var d = Q.defer();
+    t1 = +new Date();
 
     var sourceNameArr = [];
     var siteObjArr = [];
@@ -27,12 +28,11 @@ var queryAllWebSites = function(){
         siteObjArr.push(webSites[webSiteObjKey]);
     }
 
-    var currentIndex = 0,
+    var currentIndex = 0;
         webSitesLen = siteObjArr.length;
 
+
     var eachWebSitesObj = function(){
-        utils.log('webSitesLen:',webSitesLen);
-        console.log('currentIndex:',currentIndex);
         if( currentIndex < webSitesLen){
 
             var webSiteObj = siteObjArr[currentIndex];
@@ -43,7 +43,7 @@ var queryAllWebSites = function(){
 
             if(address){
 
-                var p = query.open({
+                var p = queryAnimation.open({
                     sourceName: sourceName,
                     address: address,
                     saveJsonDirPath: saveJsonDirPath
@@ -68,24 +68,58 @@ var queryAllWebSites = function(){
 
     return d.promise;
 };
-var queryAnimationPromise = queryAllWebSites();
-// when query all websites done
-queryAnimationPromise.done(function() {
+exports.query = function(cb){
+    var queryAnimationPromise = queryAllWebSites();
+    queryAnimationPromise.done(function() {
 
-    concatNewAnimation.saveConcatResult({
-        saveJsonDirPath:saveJsonDirPath,
-        saveAllJsonName:saveAllJsonName
-    },function(){
+        concatNewAnimation.saveConcatResult({
+            saveJsonDirPath:saveJsonDirPath,
+            saveAllJsonName:saveAllJsonName
+        },function(){
 
-        console.log('phantom.exit()');
+            t2 = +new Date();
+            var cost = (t2 - t1) / 1000;
+            console.log('===== 爬'+webSitesLen+'个网站 总共耗时：', cost, ' 秒 ======');
 
-        phantom.exit();
+            cb(true)
+        });
     });
-});
-// while query occurred accident
-queryAnimationPromise.fail(function(err){
+    // while query occurred accident
+    queryAnimationPromise.fail(function(err){
 
-    console.log('fail',err);
+        console.log('------ websites  fail ----');
+        console.log(err);
 
-    phantom.exit();
+        cb(false)
+    });
+};
+/*
+var query = function(cb){
+    var queryAnimationPromise = queryAllWebSites();
+    queryAnimationPromise.done(function() {
+
+        concatNewAnimation.saveConcatResult({
+            saveJsonDirPath:saveJsonDirPath,
+            saveAllJsonName:saveAllJsonName
+        },function(){
+
+            t2 = +new Date();
+            var cost = (t2 - t1) / 1000;
+            console.log('===== 爬'+webSitesLen+'个网站 总共耗时：', cost, ' 秒 ======');
+
+            cb(true)
+        });
+    });
+    // while query occurred accident
+    queryAnimationPromise.fail(function(err){
+
+        console.log('------ websites  fail ----');
+        console.log(err);
+
+        cb(false)
+    });
+};
+query(function(is){
+    utils.log(is);
 });
+*/
