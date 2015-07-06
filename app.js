@@ -12,13 +12,18 @@ var app3 = require('./app3');
 
 var port = 8081;
 
+var onQuerying = false;
+
 //获取视频资源
 var getAllVideoSrc = function(){
     return jsonDataHandler.read('allVideoSrc.json');
 };
 //爬取视频资源
 var setAllVideoSrc = function(){
-
+    if(onQuerying){
+        return 'on querying';
+    }
+    onQuerying = true;
     app1.query(function(isSuccess){
         if(isSuccess){
             utils.log('==== 爬取动漫，第1阶段：成功 =====');
@@ -28,6 +33,7 @@ var setAllVideoSrc = function(){
                     app3.query(function(isSuccess3){
                         if(isSuccess3){
                             utils.log('==== 爬取视频源，第3阶段：成功 =====');
+                            onQuerying = false;
                         }else{
                             utils.log('==== 爬取视频源，第3阶段：失败 =====');
                         }
@@ -41,10 +47,8 @@ var setAllVideoSrc = function(){
         }
     });
 
-    return 'on querying'
+    return 'start querying'
 };
-setAllVideoSrc();
-/*
 
 var server = webServer.create();
 var service = server.listen(port,function(req,res){
@@ -52,9 +56,22 @@ var service = server.listen(port,function(req,res){
     var requestType = req.headers('requestType');
 
     if(requestType === 'set'){
-        result = setAllVideoSrc();
+        result = {
+            result:!onQuerying,
+            data:setAllVideoSrc()
+        };
     }else if(requestType === 'get'){
-        result = getAllVideoSrc();
+        if(onQuerying){
+            result = JSON.stringify({
+                result:false,
+                data:'onQuerying'
+            });
+        }else{
+            result = {
+                result:true,
+                data:getAllVideoSrc()
+            };
+        }
     }
 
     res.setHeader('accept','application/json');
@@ -62,4 +79,3 @@ var service = server.listen(port,function(req,res){
     res.close();
 });
 utils.log('server is running on port:',port);
-    */
