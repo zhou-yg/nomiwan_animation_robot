@@ -75,7 +75,8 @@ exports.query = function(cb){
         concatNewAnimation.saveConcatResult({
             saveJsonDirPath:saveJsonDirPath,
             saveAllJsonName:saveAllJsonName
-        },function(){
+        },function(result){
+            utils.log(result);
 
             t2 = +new Date();
             var cost = (t2 - t1) / 1000;
@@ -88,7 +89,7 @@ exports.query = function(cb){
     queryAnimationPromise.fail(function(err){
 
         console.log('------ websites  fail ----');
-        console.log(err);
+        console.log('err:',err);
 
         cb(false)
     });

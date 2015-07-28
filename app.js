@@ -49,7 +49,7 @@ var setAllVideoSrc = function(){
 
     return 'start querying'
 };
-
+setAllVideoSrc();
 var server = webServer.create();
 var service = server.listen(port,function(req,res){
     var result;
